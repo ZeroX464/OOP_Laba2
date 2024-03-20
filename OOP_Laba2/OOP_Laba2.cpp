@@ -7,23 +7,14 @@ class Point {
 protected:
     int x, y, z;
 public:
-    Point() {
+    Point(): x(0), y(0), z(0) {
         printf("Point()\n");
-        x = 0;
-        y = 0;
-        z = 0;
     }
-    Point(int x, int y, int z) {
+    Point(int x, int y, int z) : x(x), y(y), z(z) {
         printf("Point(int x, int y, int z)\n");
-        this->x = x;
-        this->y = y;
-        this->z = z;
     }
-    Point(const Point& p) {
+    Point(const Point& p) : x(p.x), y(p.y), z(p.z) {
         printf("Point(const Point &p)\n");
-        x = p.x;
-        y = p.y;
-        z = p.z;
     }
     virtual ~Point() {
         printf("%d, %d, %d\n", x, y, z);
@@ -49,20 +40,14 @@ class UndefinedPoint: public Point {
 private:
     int range;
 public:
-    UndefinedPoint() : Point() {
+    UndefinedPoint() : Point(), range(0) {
         printf("UndefinedPoint()\n");
-        range = 0;
     }
-    UndefinedPoint(int x, int y, int z, int randomRange) : Point(x, y, z) {
+    UndefinedPoint(int x, int y, int z, int randomRange) : Point(x, y, z), range(randomRange) {
         printf("UndefinedPoint(int x, int y, int z)\n");
-        this->range = randomRange;
     }
-    UndefinedPoint(const UndefinedPoint& p) {
+    UndefinedPoint(const UndefinedPoint& p) : Point(p.x, p.y, p.z), range(p.range) {
         printf("UndefinedPoint(const Point &p)\n");
-        x = p.x;
-        y = p.y;
-        z = p.z;
-        range = p.range;
     }
     ~UndefinedPoint() {
         printf("%d, %d, %d, Range = %d\n", x, y, z, range);
@@ -84,26 +69,15 @@ protected:
     Point* p2;
     Point* p3;
 public:
-    Triangle() {
+    Triangle() : p1(new Point(1,0,0)), p2(new Point(0,1,0)), p3(new Point(0,0,1)) {
         printf("Triangle()\n");
-        p1 = new Point(1, 0, 0);
-        p2 = new Point(0, 1, 0);
-        p3 = new Point(0, 0, 1);
     }
-    Triangle(Point p1, Point p2, Point p3) {
+    Triangle(Point p1, Point p2, Point p3) : p1(&p1), p2(&p2), p3(&p3) {
         printf("Triangle(Point p1, Point p2, Point p3)\n");
-        this->p1 = &p1;
-        this->p2 = &p2;
-        this->p3 = &p3;
     }
-    Triangle(const Triangle& t) {
+    Triangle(const Triangle& t) : p1(t.p1), p2(t.p2), p3(t.p3) {
         printf("Triangle(const Triangle& t)\n");
-        
-        p1 = t.p1;
-        p2 = t.p2;
-        p3 = t.p3;
-        
-        /*
+        /* Глубокое
         p1 = new Point(*(t.p1));
         p2 = new Point(*(t.p2));
         p3 = new Point(*(t.p3));
