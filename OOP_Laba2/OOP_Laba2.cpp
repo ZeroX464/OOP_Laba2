@@ -46,7 +46,7 @@ public:
     UndefinedPoint(int x, int y, int z, int randomRange) : Point(x, y, z), range(randomRange) {
         printf("UndefinedPoint(int x, int y, int z)\n");
     }
-    UndefinedPoint(const UndefinedPoint& p) : Point(p.x, p.y, p.z), range(p.range) {
+    UndefinedPoint(const UndefinedPoint& p) : Point(p), range(p.range) {
         printf("UndefinedPoint(const Point &p)\n");
     }
     ~UndefinedPoint() {
@@ -85,9 +85,11 @@ public:
     }
     ~Triangle() {
         printf("~Triangle()\n");
+        /*
         delete p1;
         delete p2;
         delete p3;
+        */
     }
     void showPoints() {
         p1->showMe();
@@ -100,6 +102,12 @@ class ExamplePoint : public Point {};
 
 int main()
 {
+    Point ps1(1,1,1), ps2, ps3;
+    {
+    Triangle t(ps1, ps2, ps3); //???
+    }
+    Point* pk = &ps1;
+    delete pk; //???
     printf("Static objects:\n");
     {
         Point p;
@@ -109,6 +117,7 @@ int main()
         Point p2(1, 2, 3);
         Point p3(p2);
     }
+    //ps1.rLength();
     printf("Dynamic objects:\n");
     {
         Point *p = new Point;
