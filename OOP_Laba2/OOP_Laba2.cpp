@@ -72,7 +72,7 @@ public:
     Triangle() : p1(new Point(1,0,0)), p2(new Point(0,1,0)), p3(new Point(0,0,1)) {
         printf("Triangle()\n");
     }
-    Triangle(Point p1, Point p2, Point p3) : p1(&p1), p2(&p2), p3(&p3) {
+    Triangle(Point p1, Point p2, Point p3) : p1(new Point(p1)), p2(new Point(p2)), p3(new Point(p3)) {
         printf("Triangle(Point p1, Point p2, Point p3)\n");
     }
     Triangle(const Triangle& t) : p1(t.p1), p2(t.p2), p3(t.p3) {
@@ -85,11 +85,9 @@ public:
     }
     ~Triangle() {
         printf("~Triangle()\n");
-        /*
         delete p1;
         delete p2;
         delete p3;
-        */
     }
     void showPoints() {
         p1->showMe();
@@ -102,13 +100,22 @@ class ExamplePoint : public Point {};
 
 int main()
 {
-    Point ps1(1,1,1), ps2, ps3;
+    Point ps1(1,1,1), ps2(2,2,2), ps3(3,3,3);
     {
-    Triangle t(ps1, ps2, ps3); //???
+    Triangle t(ps1, ps2, ps3); // Здесь ps1, ps2, ps3 передаются "по значению" т.е. создаются копии этих объектов и уже они передаются в констурктор
+    // В конструкторе создаются указатели на эти временные объекты
+    // После окончания блока т.к. объект был создан статически, высвобождается вся память, в том числе вызываются деструкторы этих временных объектов
+    // Поэтому если в деструкторе Triangle есть delete p1, p2, p3, то идёт попытка удаления временных объектов которых уже нету (или сначала delete, потом удаление временных)
+    // И вылезает ошибка
+    // Решение: в конструкторе с параметрами Triangle создавать динамически объекты, тогда после удаления временных объектов можно будет спокойно вызвать delete
+    // Т.к. в аргументе delete будет указатель на новый объект
     }
-    Point* pk = &ps1;
-    delete pk; //???
-    printf("Static objects:\n");
+    /*
+    Point p1;
+    Point* pk = &p1;
+    delete pk; "Использование оператора delete на указателе на объект, который не был создан при помощи оператора new, создает непрогнозируемый результат." Microsoft
+    */  
+        printf("Static objects:\n");
     {
         Point p;
         p.rLength();
